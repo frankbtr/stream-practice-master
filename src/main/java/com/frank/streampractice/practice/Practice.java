@@ -2,6 +2,7 @@ package com.frank.streampractice.practice;
 
 import com.frank.streampractice.model.*;
 import com.frank.streampractice.service.*;
+import com.sun.source.tree.ReturnTree;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -229,92 +230,131 @@ public class Practice {
 
     // Display the employee(s) who gets the maximum salary
     public static List<Employee> getMaxSalaryEmployee() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .filter(employee -> {
+                    try {
+                        return employee.getSalary().equals(getMaxSalary());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    })
+                .collect(Collectors.toList());
     }
 
     // Display the max salary employee's job
-    public static Job getMaxSalaryEmployeeJob() throws Exception {
-        //TODO Implement the method
-        return new Job();
+    public static Job getMaxSalaryEmployeeJob() {
+//        return getAllEmployees().stream()
+//                .max(Comparator.comparing(Employee::getSalary))
+//                .get().getJob();
+
+        return getMaxSalaryEmployee().get(0).getJob();
     }
 
     // Display the max salary in Americas Region
-    public static Long getMaxSalaryInAmericasRegion() throws Exception {
-        //TODO Implement the method
-        return 1L;
+    public static Long getMaxSalaryInAmericasRegion() {
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getDepartment().getLocation().getCountry().getRegion().getRegionName().equals("Americas"))
+                .max(Comparator.comparing(Employee::getSalary))
+                .get().getSalary();
     }
 
     // Display the second maximum salary an employee gets
-    public static Long getSecondMaxSalary() throws Exception {
-        //TODO Implement the method
-        return 1L;
+    public static Long getSecondMaxSalary() {
+        return getAllEmployees().stream()
+                .sorted(Comparator.comparing(Employee::getSalary).reversed())
+                .map(Employee::getSalary)
+                .distinct()
+                .skip(1)
+                .findFirst().get();
+
+//        return getAllEmployees().stream()
+//                .filter(employee -> {
+//                    try {
+//                        return employee.getSalary().compareTo(getMaxSalary()) < 0;
+//                    } catch (Exception e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                })
+//                .sorted(Comparator.comparing(Employee::getSalary))
+//                .findFirst().get().getSalary();
+
     }
 
     // Display the employee(s) who gets the second maximum salary
     public static List<Employee> getSecondMaxSalaryEmployee() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getSalary().equals(getSecondMaxSalary()))
+                .collect(Collectors.toList());
     }
 
     // Display the minimum salary an employee gets
-    public static Long getMinSalary() throws Exception {
-        //TODO Implement the method
-        return 1L;
+    public static Long getMinSalary() {
+        return getAllEmployees().stream()
+                .sorted(Comparator.comparing(Employee::getSalary))
+                .findFirst().get().getSalary();
     }
 
     // Display the employee(s) who gets the minimum salary
     public static List<Employee> getMinSalaryEmployee() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getSalary().equals(getMinSalary()))
+                .collect(Collectors.toList());
     }
 
     // Display the second minimum salary an employee gets
-    public static Long getSecondMinSalary() throws Exception {
-        //TODO Implement the method
-        return 1L;
+    public static Long getSecondMinSalary(){
+        return getAllEmployees().stream()
+                .sorted(Comparator.comparing(Employee::getSalary))
+                .map(Employee::getSalary)
+                .distinct()
+                .skip(1)
+                .findFirst().get();
     }
 
     // Display the employee(s) who gets the second minimum salary
     public static List<Employee> getSecondMinSalaryEmployee() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getSalary().equals(getSecondMinSalary()))
+                .collect(Collectors.toList());
     }
 
     // Display the average salary of the employees
     public static Double getAverageSalary() {
-        //TODO Implement the method
-        return 1d;
+        return getAllEmployees().stream()
+                .collect(Collectors.averagingDouble(Employee::getSalary));
     }
 
     // Display all the employees who are making more than average salary
     public static List<Employee> getAllEmployeesAboveAverage() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getSalary() > getAverageSalary())
+                .collect(Collectors.toList());
     }
 
     // Display all the employees who are making less than average salary
     public static List<Employee> getAllEmployeesBelowAverage() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getSalary() < getAverageSalary())
+                .collect(Collectors.toList());
     }
 
     // Display all the employees separated based on their department id number
     public static Map<Long, List<Employee>> getAllEmployeesForEachDepartment() {
-        //TODO Implement the method
-        return new HashMap<>();
+        return getAllEmployees().stream()
+                .collect(Collectors.groupingBy(employee -> employee.getDepartment().getId()));
     }
 
     // Display the total number of the departments
     public static Long getTotalDepartmentsNumber() {
-        //TODO Implement the method
-        return 1L;
+//        return getAllDepartments().stream()
+//                .count();
+
+        return (long) getAllDepartments().size();
     }
 
     // Display the employee whose first name is 'Alyssa' and manager's first name is 'Eleni' and department name is 'Sales'
-    public static Employee getEmployeeWhoseFirstNameIsAlyssaAndManagersFirstNameIsEleniAndDepartmentNameIsSales() throws Exception {
-        //TODO Implement the method
-        return new Employee();
+    public static Employee getEmployeeWhoseFirstNameIsAlyssaAndManagersFirstNameIsEleniAndDepartmentNameIsSales() {
+        return null; //wip
     }
 
     // Display all the job histories in ascending order by start date
@@ -342,7 +382,7 @@ public class Practice {
     }
 
     // Display the employee whose job history start date is 01.01.2007 and job history end date is 31.12.2007 and department's name is 'Shipping'
-    public static Employee getEmployeeOfJobHistoryWhoseStartDateIsFirstDayOfJanuary2007AndEndDateIsLastDayOfDecember2007AndDepartmentNameIsShipping() throws Exception {
+    public static Employee getEmployeeOfJobHistoryWhoseStartDateIsFirstDayOfJanuary2007AndEndDateIsLastDayOfDecember2007AndDepartmentNameIsShipping() {
         //TODO Implement the method
         return new Employee();
     }
@@ -385,7 +425,7 @@ public class Practice {
     }
 
     // Display the length of the longest full name(s)
-    public static Integer getLongestNameLength() throws Exception {
+    public static Integer getLongestNameLength() {
         //TODO Implement the method
         return 1;
     }
