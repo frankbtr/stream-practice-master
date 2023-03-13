@@ -3,8 +3,10 @@ package com.frank.streampractice.practice;
 import com.frank.streampractice.model.*;
 import com.frank.streampractice.service.*;
 import com.sun.source.tree.ReturnTree;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -354,98 +356,153 @@ public class Practice {
 
     // Display the employee whose first name is 'Alyssa' and manager's first name is 'Eleni' and department name is 'Sales'
     public static Employee getEmployeeWhoseFirstNameIsAlyssaAndManagersFirstNameIsEleniAndDepartmentNameIsSales() {
-        return null; //wip
+//        return getAllEmployees().stream()
+//                .filter(employee -> employee.getFirstName().equals("Alyssa")
+//                && employee.getManager().getFirstName().equals("Eleni")
+//                && employee.getDepartment().equals("Sales"))
+//                .findFirst().get();
+
+        //filter is intermediate operation
+        //for readability is one is better, not for performance
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getFirstName().equals("Alyssa"))
+                .filter(employee -> employee.getManager().getFirstName().equals("Eleni"))
+                .filter(employee -> employee.getDepartment().getDepartmentName().equals("Sales"))
+                .findFirst().get();
     }
 
     // Display all the job histories in ascending order by start date
     public static List<JobHistory> getAllJobHistoriesInAscendingOrder() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllJobHistories().stream()
+                .sorted(Comparator.comparing(JobHistory::getStartDate))
+                .collect(Collectors.toList());
     }
 
     // Display all the job histories in descending order by start date
     public static List<JobHistory> getAllJobHistoriesInDescendingOrder() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllJobHistories().stream()
+                .sorted(Comparator.comparing(JobHistory::getStartDate).reversed())
+                .collect(Collectors.toList());
     }
 
     // Display all the job histories where the start date is after 01.01.2005
     public static List<JobHistory> getAllJobHistoriesStartDateAfterFirstDayOfJanuary2005() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllJobHistories().stream()
+                .filter(jobHistory -> jobHistory.getStartDate().isAfter(LocalDate.of(2005, 1, 1)))
+                .collect(Collectors.toList());
     }
 
     // Display all the job histories where the end date is 31.12.2007 and the job title of job is 'Programmer'
     public static List<JobHistory> getAllJobHistoriesEndDateIsLastDayOfDecember2007AndJobTitleIsProgrammer() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllJobHistories().stream()
+                .filter(jobHistory -> jobHistory.getEndDate().equals(LocalDate.of(2007, 12, 31)))
+                .filter(jobHistory -> jobHistory.getJob().getJobTitle().equals("Programmer"))
+                .collect(Collectors.toList());
     }
 
     // Display the employee whose job history start date is 01.01.2007 and job history end date is 31.12.2007 and department's name is 'Shipping'
     public static Employee getEmployeeOfJobHistoryWhoseStartDateIsFirstDayOfJanuary2007AndEndDateIsLastDayOfDecember2007AndDepartmentNameIsShipping() {
-        //TODO Implement the method
-        return new Employee();
+        return getAllJobHistories().stream()
+                .filter(jobHistory -> jobHistory.getStartDate().equals(LocalDate.of(2007,1,1)))
+                .filter(jobHistory -> jobHistory.getEndDate().equals(LocalDate.of(2007, 12, 31)))
+                .filter(jobHistory -> jobHistory.getDepartment().getDepartmentName().equals("Shipping"))
+                .findFirst().get().getEmployee();
     }
 
     // Display all the employees whose first name starts with 'A'
     public static List<Employee> getAllEmployeesFirstNameStartsWithA() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getFirstName().startsWith("A"))
+                .collect(Collectors.toList());
     }
 
     // Display all the employees whose job id contains 'IT'
     public static List<Employee> getAllEmployeesJobIdContainsIT() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getJob().getId().contains("IT"))
+                .collect(Collectors.toList());
     }
 
     // Display the number of employees whose job title is programmer and department name is 'IT'
     public static Long getNumberOfEmployeesWhoseJobTitleIsProgrammerAndDepartmentNameIsIT() {
-        //TODO Implement the method
-        return 1L;
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getJob().getJobTitle().equals("Programmer"))
+                .filter(employee -> employee.getDepartment().getDepartmentName().equals("IT"))
+                .count();
     }
 
     // Display all the employees whose department id is 50, 80, or 100
     public static List<Employee> getAllEmployeesDepartmentIdIs50or80or100() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getDepartment().getId().equals(50L)
+                 || employee.getDepartment().getId().equals(80L)
+                 || employee.getDepartment().getId().equals(100L))
+                .collect(Collectors.toList());
     }
 
     // Display the initials of all the employees
     // Note: You can assume that there is no middle name
     public static List<String> getAllEmployeesInitials() {
-        //TODO Implement the method
-        return new ArrayList<>();
+//        return getAllEmployees().stream()
+//                .map(employee -> {
+//                    String firstNameInitial = employee.getFirstName().substring(0,1);
+//                    String lastNameInitial = employee.getLastName().substring(0,1);
+//                    return firstNameInitial + lastNameInitial;
+//                }).collect(Collectors.toList());
+
+        return getAllEmployees().stream()
+                .map(employee -> {
+                    char firstNameInitial = employee.getFirstName().charAt(0);
+                    char lastNameInitial = employee.getLastName().charAt(0);
+                    return "" + firstNameInitial + lastNameInitial;
+                }).collect(Collectors.toList());
     }
 
     // Display the full names of all the employees
     public static List<String> getAllEmployeesFullNames() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .map(employee -> employee.getFirstName() + " " + employee.getLastName())
+                .collect(Collectors.toList());
     }
 
     // Display the length of the longest full name(s)
     public static Integer getLongestNameLength() {
-        //TODO Implement the method
-        return 1;
+        return getAllEmployeesFullNames().stream()
+                .max(Comparator.comparing(String::length))
+                .get().length();
     }
 
     // Display the employee(s) with the longest full name(s)
     public static List<Employee> getLongestNamedEmployee() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getFirstName().length() + employee.getLastName().length() + 1 == getLongestNameLength())
+                .collect(Collectors.toList());
     }
 
     // Display all the employees whose department id is 90, 60, 100, 120, or 130
     public static List<Employee> getAllEmployeesDepartmentIdIs90or60or100or120or130() {
-        //TODO Implement the method
-        return new ArrayList<>();
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getDepartment().getId().equals(90L)
+                || employee.getDepartment().getId().equals(60L)
+                || employee.getDepartment().getId().equals(100L)
+                || employee.getDepartment().getId().equals(120L)
+                || employee.getDepartment().getId().equals(130L))
+                .collect(Collectors.toList());
     }
 
     // Display all the employees whose department id is NOT 90, 60, 100, 120, or 130
     public static List<Employee> getAllEmployeesDepartmentIdIsNot90or60or100or120or130() {
-        //TODO Implement the method
-        return new ArrayList<>();
+//        return getAllEmployees().stream()
+//                .filter(employee -> !getAllEmployeesDepartmentIdIsNot90or60or100or120or130().contains(employee))
+//                .collect(Collectors.toList());
+
+        return getAllEmployees().stream()
+                .filter(employee -> !employee.getDepartment().getId().equals(90L)
+                && !employee.getDepartment().getId().equals(60L)
+                && !employee.getDepartment().getId().equals(100L)
+                && !employee.getDepartment().getId().equals(120L)
+                && !employee.getDepartment().getId().equals(130L))
+                .collect(Collectors.toList());
     }
 
 }
